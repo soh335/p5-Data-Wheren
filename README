@@ -1,21 +1,21 @@
-This is Perl module Data::SpatioTemporalHash.
+This is Perl module Data::Wheren.
 
 INSTALLATION
 
 Type the following command:
 
-    $ curl -L http://cpanmin.us | perl - Data::SpatioTemporalHash
+    $ curl -L http://cpanmin.us | perl - Data::Wheren
 
 Or install cpanm and then run the following command to install
-Data::SpatioTemporalHash:
+Data::Wheren:
 
-    $ cpanm Data::SpatioTemporalHash
+    $ cpanm Data::Wheren
 
 If you get an archive of this distribution, unpack it and build it
 as per the usual:
 
-    $ tar xzf Data-SpatioTemporalHash-$version.tar.gz
-    $ cd Data-SpatioTemporalHash-$version
+    $ tar xzf Data-Wheren-$version.tar.gz
+    $ cd Data-Wheren-$version
     $ perl Makefile.PL
     $ make && make test
 
@@ -25,9 +25,9 @@ Then install it:
 
 DOCUMENTATION
 
-Data::SpatioTemporalHash documentation is available as in POD. So you can do:
+Data::Wheren documentation is available as in POD. So you can do:
 
-    $ perldoc Data::SpatioTemporalHash
+    $ perldoc Data::Wheren
 
 to read the documentation online with your favorite pager.
 

@@ -2,11 +2,11 @@
 use strict;
 use Test::More;
 
-use Data::SpatioTemporalHash;
+use Data::Wheren;
 use Time::Piece;
 
-# test Data::SpatioTemporalHash here
-my $sth = Data::SpatioTemporalHash->new;
+# test Data::Wheren here
+my $sth = Data::Wheren->new;
 my $timestamp = Time::Piece->strptime("2010-01-01 00:00:00", "%Y-%m-%d %T")->epoch;
 my $str = $sth->encode(35.8, 134.3, $timestamp, 9);
 warn "";

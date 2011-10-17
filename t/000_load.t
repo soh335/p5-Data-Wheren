@@ -3,7 +3,7 @@ use strict;
 use Test::More tests => 1;
 
 BEGIN {
-    use_ok 'Data::SpatioTemporalHash';
+    use_ok 'Data::Wheren';
 }
 
-diag "Testing Data::SpatioTemporalHash/$Data::SpatioTemporalHash::VERSION";
+diag "Testing Data::Wheren/$Data::Wheren::VERSION";

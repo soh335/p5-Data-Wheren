@@ -1,4 +1,4 @@
-# for Data-SpatioTemporalHash
+# for Data-Wheren
 # Makefile.PL
 Module::Install
 Module::Install::AuthorTests

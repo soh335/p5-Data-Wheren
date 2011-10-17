@@ -24,7 +24,7 @@ BEGIN {
 }
 use inc::Module::Install;
 
-all_from 'lib/Data/SpatioTemporalHash.pm';
+all_from 'lib/Data/Wheren.pm';
 
 
 test_requires 'Test::More'     => '0.88';
@@ -37,7 +37,7 @@ author_tests 'xt';
 
 
 clean_files qw(
-    Data-SpatioTemporalHash-*
+    Data-Wheren-*
     *.stackdump
     cover_db *.gcov *.gcda *.gcno
     nytprof

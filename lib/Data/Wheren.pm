@@ -1,4 +1,4 @@
-package Data::SpatioTemporalHash;
+package Data::Wheren;
 use 5.008_001;
 use strict;
 use warnings;
@@ -239,15 +239,15 @@ __END__
 
 =head1 NAME
 
-Data::SpatioTemporalHash - Perl extention to do something
+Data::Wheren - Perl extention to do something
 
 =head1 VERSION
 
-This document describes Data::SpatioTemporalHash version 0.01.
+This document describes Data::Wheren version 0.01.
 
 =head1 SYNOPSIS
 
-    use Data::SpatioTemporalHash;
+    use Data::Wheren;
 
 =head1 DESCRIPTION
 
