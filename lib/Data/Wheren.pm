@@ -7,80 +7,18 @@ our $VERSION = '0.01';
 
 use Carp;
 
-our @ENC = qw(
-  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 ! -
-  );
-our $ENC_WORD_LENGTH = 1;
-
-our %DEC = map { $ENC[$_] => $_ } 0 .. $#ENC;
-
-our $DATA = [
-    [
-        [0, 4, 32, 36],
-        [2, 6, 34, 38],
-        [16, 20, 48, 52],
-        [18, 22, 50, 54]
-    ],
-    [
-        [1, 5, 33, 37],
-        [3, 7, 35, 39],
-        [17, 21, 49, 53],
-        [19, 23, 51, 55]
-    ],
-    [
-        [8, 12, 40, 44],
-        [10, 14, 42, 46],
-        [24, 28, 56, 60],
-        [26, 30, 58, 62]
-    ],
-    [
-        [9, 13, 41, 45],
-        [11, 15, 43, 47],
-        [25, 29, 57, 61],
-        [27, 31, 59, 63]
-    ]
-];
-
-our $NEIGHBOR = _gen_neihbor();
-our $BORDER = _gen_border();
-
 sub new {
     my ($class, %args) = @_;
 
-    $args{min_timestamp} ||= 0;
-    $args{max_timestamp} ||= 2147451247; # 2038-01-19 03:14:7
+    $args{min} ||= 0;
+    $args{max} ||= 2147451247; # 2038-01-19 03:14:7
 
     bless \%args, $class;
 }
 
 #my ($self, $lat, $lon, $timestamp, $level) = @_;
 sub encode {
-    my ($self, @pos) = @_;
-    my $level = pop @pos;
-
-    my $int = [ [ -90, 90 ], [ -180, 180 ], [ $self->{min_timestamp}, $self->{max_timestamp} ] ];
-    my @enc = ();
-
-    for my $i ( 1 .. $level ) {
-        my $bits = 0;
-        for my $j ( 0 .. 5 ) {
-            my $flag = $j % 3;
-
-            my $mid = ($int->[$flag][0] + $int->[$flag][1]) / 2;
-            my $bit = $pos[$flag] >= $mid ? 1 : 0;
-
-            if ( $bit ) {
-                $int->[$flag][0] = $mid;
-            }
-            else {
-                $int->[$flag][1] = $mid;
-            }
-            $bits = ( ( $bits << 1 ) | $bit );
-        }
-        push @enc, $ENC[$bits];
-    }
-
-    join "", @enc;
+    croak "should be override encode method";
 }
 
 sub decode {
@@ -92,24 +30,7 @@ sub decode {
 }
 
 sub decode_to_interval {
-    my ($self, $str) = @_;
-
-    my $int = [ [ -90, 90 ], [ -180, 180 ], [ $self->{min_timestamp}, $self->{max_timestamp} ] ];
-
-    for my $ch ( $str =~ /.{$ENC_WORD_LENGTH}/g ) {
-        if ( defined ( my $bits = $DEC{$ch} ) ) {
-            for my $j ( 0 .. 5 ) {
-                my $flag = $j % 3;
-                $int->[$flag][ ( $bits & 32 ) >> 5 == 0 ? 1 : 0 ] = ( $int->[$flag][0] + $int->[$flag][1] ) / 2;
-                $bits <<= 1;
-            }
-        }
-        else {
-            croak "Bad character '$ch' in hash '$str'";
-        }
-    }
-
-    $int;
+    croak "should be override decode_to_interval method";
 }
 
 sub adjacent {
