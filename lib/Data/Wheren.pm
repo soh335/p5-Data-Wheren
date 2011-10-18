@@ -46,7 +46,6 @@ sub adjacent {
         $base = $self->adjacent($base, $direction);
     }
 
-    #warn $NEIGHBOR->{$direction}->[$index];
     $base . $ENC[$NEIGHBOR->{$direction}[$index]];
 }
 
