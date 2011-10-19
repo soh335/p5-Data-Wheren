@@ -50,10 +50,11 @@ sub adjacent {
     my ($self, $str, $direction) = @_;
 
     $direction = lc $direction;
-    my $base = substr($str, 0, -1);
-    my $last_char = substr($str, -1, 1);
+    my $base = substr($str, 0, - $self->{enc_world_length});
+    my $last_char = substr($str, -$self->{enc_world_length}, $self->{enc_world_length});
 
-    my $index = $self->{dec}->{$last_char} or croak "";
+    croak "not exist lat char str:$str" unless defined $self->{dec}->{$last_char};
+    my $index = $self->{dec}->{$last_char};
 
     if ( defined $self->{border}->{$direction}{$index} ) {
         $base = $self->adjacent($base, $direction);
@@ -90,7 +91,7 @@ sub _gen_neihbor {
 
     my $neighbor = {};
 
-    for my $i ( 0 .. 63 ) {
+    for my $i ( 0 .. scalar @{$self->{enc}} - 1 ) {
 
         #right
         my $right_list = $neighbor->{right} ||= [];
@@ -128,7 +129,7 @@ sub _gen_neihbor {
         my $top_list = $neighbor->{top} ||= [];
         push @$top_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $self->{data}->[ ($floor_index + 1) % 4][$row_index][$v_index];
+                return $self->{data}->[ ($floor_index + 1) % scalar @{$self->{data}} - 1][$row_index][$v_index];
             });
 
         #bottom
@@ -136,7 +137,7 @@ sub _gen_neihbor {
         push @$bottom_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
                 my $n = $floor_index - 1;
-                $n = 3 if $n < 0;
+                $n = scalar @{$self->{data}} - 1 if $n < 0;
                 return $self->{data}->[$n][$row_index][$v_index];
             });
     }
