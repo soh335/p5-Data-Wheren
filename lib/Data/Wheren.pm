@@ -10,10 +10,23 @@ use Carp;
 sub new {
     my ($class, %args) = @_;
 
+    croak "should override" if $class eq "Data::Wheren";
+
     $args{min} ||= 0;
     $args{max} ||= 2147451247; # 2038-01-19 03:14:7
+    $args{dec} = +{ map { $args{enc}->[$_] => $_ } 0 .. scalar @{$args{enc}} - 1};
 
-    bless \%args, $class;
+    my $self = bless \%args, $class;
+
+    $self->{neighbor} = $self->_gen_neihbor();
+    $self->{border} = $self->_gen_border();
+
+    $self;
+}
+
+sub _gen_int {
+    my $self = shift;
+    [ [ -90, 90 ], [ -180, 180 ], [ $self->{min}, $self->{max} ] ];
 }
 
 #my ($self, $lat, $lon, $timestamp, $level) = @_;
@@ -40,20 +53,20 @@ sub adjacent {
     my $base = substr($str, 0, -1);
     my $last_char = substr($str, -1, 1);
 
-    my $index = $DEC{$last_char} or croak "";
+    my $index = $self->{dec}->{$last_char} or croak "";
 
-    if ( defined $BORDER->{$direction}{$index} ) {
+    if ( defined $self->{border}->{$direction}{$index} ) {
         $base = $self->adjacent($base, $direction);
     }
 
-    $base . $ENC[$NEIGHBOR->{$direction}[$index]];
+    $base . $self->{enc}->[$self->{neighbor}->{$direction}[$index]];
 }
 
 sub _search_data {
-    my ($target, $func) = @_;
+    my ($self, $target, $func) = @_;
 
     my $floor_index = 0;
-    for my $floor ( @$DATA ) {
+    for my $floor ( @{$self->{data}} ) {
 
         my $row_index = 0;
         for my $row ( @$floor ) {
@@ -73,6 +86,7 @@ sub _search_data {
 }
 
 sub _gen_neihbor {
+    my ($self) = @_;
 
     my $neighbor = {};
 
@@ -80,50 +94,50 @@ sub _gen_neihbor {
 
         #right
         my $right_list = $neighbor->{right} ||= [];
-        push @$right_list, _search_data($i, sub {
+        push @$right_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $DATA->[$floor_index][$row_index][ ($v_index + 1) % 4];
+                return $self->{data}->[$floor_index][$row_index][ ($v_index + 1) % 4];
             });
 
         # left 
         my $left_list = $neighbor->{left} ||= [];
-        push @$left_list, _search_data($i, sub {
+        push @$left_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
                 my $n = $v_index - 1;
                 $n = 3 if $n < 0;
-                return $DATA->[$floor_index][$row_index][ $n ];
+                return $self->{data}->[$floor_index][$row_index][ $n ];
             });
 
         #back
         my $back_list = $neighbor->{back} ||= [];
-        push @$back_list, _search_data($i, sub {
+        push @$back_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $DATA->[$floor_index][ ($row_index + 1) % 4 ][$v_index];
+                return $self->{data}->[$floor_index][ ($row_index + 1) % 4 ][$v_index];
             });
 
         #front
         my $front_list = $neighbor->{front} ||= [];
-        push @$front_list, _search_data($i, sub {
+        push @$front_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
                 my $n = $row_index - 1;
                 $n = 3 if $n < 0;
-                return $DATA->[$floor_index][$n][$v_index];
+                return $self->{data}->[$floor_index][$n][$v_index];
             });
 
         #top
         my $top_list = $neighbor->{top} ||= [];
-        push @$top_list, _search_data($i, sub {
+        push @$top_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $DATA->[ ($floor_index + 1) % 4][$row_index][$v_index];
+                return $self->{data}->[ ($floor_index + 1) % 4][$row_index][$v_index];
             });
 
         #bottom
         my $bottom_list = $neighbor->{bottom} ||= [];
-        push @$bottom_list, _search_data($i, sub {
+        push @$bottom_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
                 my $n = $floor_index - 1;
                 $n = 3 if $n < 0;
-                return $DATA->[$n][$row_index][$v_index];
+                return $self->{data}->[$n][$row_index][$v_index];
             });
     }
 
@@ -136,11 +150,11 @@ sub _gen_border {
     my $border = { right => {}, left => {}, top => {}, bottom => {}, back => {}, front => {} };
 
     for my $i ( 0 .. 3 ) {
-        $border->{bottom}{$_} = 1 for @{$DATA->[0][$i]};
-        $border->{top}{$_} = 1 for @{$DATA->[3][$i]};
+        $border->{bottom}{$_} = 1 for @{$self->{data}->[0][$i]};
+        $border->{top}{$_} = 1 for @{$self->{data}->[3][$i]};
     }
 
-    for my $floor ( @$DATA ) {
+    for my $floor ( @{$self->{data}} ) {
 
         $border->{front}{$_} = 1 for @{$floor->[0]};
         $border->{back}{$_} = 1 for @{$floor->[3]};

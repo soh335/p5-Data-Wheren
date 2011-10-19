@@ -8,49 +8,49 @@ our $VERSION = '0.01';
 use parent 'Data::Wheren';
 use Carp;
 
-our @ENC = qw(
-  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 ! -
-  );
-our $ENC_WORD_LENGTH = 1;
+sub new {
+    my ($class, %args) = @_;
 
-our %DEC = map { $ENC[$_] => $_ } 0 .. $#ENC;
+    $args{enc} ||= [qw(
+        A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 ! -
+        )];
 
-our $DATA = [
-    [
-        [0, 4, 32, 36],
-        [2, 6, 34, 38],
-        [16, 20, 48, 52],
-        [18, 22, 50, 54]
-    ],
-    [
-        [1, 5, 33, 37],
-        [3, 7, 35, 39],
-        [17, 21, 49, 53],
-        [19, 23, 51, 55]
-    ],
-    [
-        [8, 12, 40, 44],
-        [10, 14, 42, 46],
-        [24, 28, 56, 60],
-        [26, 30, 58, 62]
-    ],
-    [
-        [9, 13, 41, 45],
-        [11, 15, 43, 47],
-        [25, 29, 57, 61],
-        [27, 31, 59, 63]
-    ]
-];
-
-our $NEIGHBOR = _gen_neihbor();
-our $BORDER = _gen_border();
+    $args{data} ||= [
+        [
+            [0, 4, 32, 36],
+            [2, 6, 34, 38],
+            [16, 20, 48, 52],
+            [18, 22, 50, 54]
+        ],
+        [
+            [1, 5, 33, 37],
+            [3, 7, 35, 39],
+            [17, 21, 49, 53],
+            [19, 23, 51, 55]
+        ],
+        [
+            [8, 12, 40, 44],
+            [10, 14, 42, 46],
+            [24, 28, 56, 60],
+            [26, 30, 58, 62]
+        ],
+        [
+            [9, 13, 41, 45],
+            [11, 15, 43, 47],
+            [25, 29, 57, 61],
+            [27, 31, 59, 63]
+        ]
+    ];
+    
+    $class->SUPER::new(%args);
+}
 
 #my ($self, $lat, $lon, $timestamp, $level) = @_;
 sub encode {
     my ($self, @pos) = @_;
     my $level = pop @pos;
 
-    my $int = [ [ -90, 90 ], [ -180, 180 ], [ $self->{min}, $self->{max} ] ];
+    my $int = $self->_gen_int;
     my @enc = ();
 
     for my $i ( 1 .. $level ) {
@@ -69,7 +69,7 @@ sub encode {
             }
             $bits = ( ( $bits << 1 ) | $bit );
         }
-        push @enc, $ENC[$bits];
+        push @enc, $self->{enc}[$bits];
     }
 
     join "", @enc;
@@ -78,10 +78,10 @@ sub encode {
 sub decode_to_interval {
     my ($self, $str) = @_;
 
-    my $int = [ [ -90, 90 ], [ -180, 180 ], [ $self->{min}, $self->{max} ] ];
+    my $int = $self->_gen_int;
 
-    for my $ch ( $str =~ /.{$ENC_WORD_LENGTH}/g ) {
-        if ( defined ( my $bits = $DEC{$ch} ) ) {
+    for my $ch ( split //, $str ) {
+        if ( defined ( my $bits = $self->{dec}{$ch} ) ) {
             for my $j ( 0 .. 5 ) {
                 my $flag = $j % 3;
                 $int->[$flag][ ( $bits & 32 ) >> 5 == 0 ? 1 : 0 ] = ( $int->[$flag][0] + $int->[$flag][1] ) / 2;
