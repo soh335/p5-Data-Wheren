@@ -129,7 +129,7 @@ sub _gen_neihbor {
         my $top_list = $neighbor->{top} ||= [];
         push @$top_list, $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $self->{data}->[ ($floor_index + 1) % scalar @{$self->{data}} - 1][$row_index][$v_index];
+                return $self->{data}->[ ($floor_index + 1) % scalar @{$self->{data}} ][$row_index][$v_index];
             });
 
         #bottom
@@ -152,7 +152,7 @@ sub _gen_border {
 
     for my $i ( 0 .. 3 ) {
         $border->{bottom}{$_} = 1 for @{$self->{data}->[0][$i]};
-        $border->{top}{$_} = 1 for @{$self->{data}->[3][$i]};
+        $border->{top}{$_} = 1 for @{$self->{data}->[scalar @{$self->{data}} - 1][$i]};
     }
 
     for my $floor ( @{$self->{data}} ) {
