@@ -90,55 +90,24 @@ sub _gen_neihbor {
     my ($self) = @_;
 
     my $neighbor = {};
+    for (qw/right left back front top bottom/) {
+        $neighbor->{$_} = [];
+    }
+
+    my $floor_length = @{$self->{data}};
+    my $row_length = @{$self->{data}[0]};
+    my $v_length = @{$self->{data}[0][0]};
 
     for my $i ( 0 .. scalar @{$self->{enc}} - 1 ) {
 
-        #right
-        my $right_list = $neighbor->{right} ||= [];
-        push @$right_list, $self->_search_data($i, sub {
+        $self->_search_data($i, sub {
                 my ($floor_index, $row_index, $v_index) = @_;
-                return $self->{data}->[$floor_index][$row_index][ ($v_index + 1) % 4];
-            });
-
-        # left 
-        my $left_list = $neighbor->{left} ||= [];
-        push @$left_list, $self->_search_data($i, sub {
-                my ($floor_index, $row_index, $v_index) = @_;
-                my $n = $v_index - 1;
-                $n = 3 if $n < 0;
-                return $self->{data}->[$floor_index][$row_index][ $n ];
-            });
-
-        #back
-        my $back_list = $neighbor->{back} ||= [];
-        push @$back_list, $self->_search_data($i, sub {
-                my ($floor_index, $row_index, $v_index) = @_;
-                return $self->{data}->[$floor_index][ ($row_index + 1) % 4 ][$v_index];
-            });
-
-        #front
-        my $front_list = $neighbor->{front} ||= [];
-        push @$front_list, $self->_search_data($i, sub {
-                my ($floor_index, $row_index, $v_index) = @_;
-                my $n = $row_index - 1;
-                $n = 3 if $n < 0;
-                return $self->{data}->[$floor_index][$n][$v_index];
-            });
-
-        #top
-        my $top_list = $neighbor->{top} ||= [];
-        push @$top_list, $self->_search_data($i, sub {
-                my ($floor_index, $row_index, $v_index) = @_;
-                return $self->{data}->[ ($floor_index + 1) % scalar @{$self->{data}} ][$row_index][$v_index];
-            });
-
-        #bottom
-        my $bottom_list = $neighbor->{bottom} ||= [];
-        push @$bottom_list, $self->_search_data($i, sub {
-                my ($floor_index, $row_index, $v_index) = @_;
-                my $n = $floor_index - 1;
-                $n = scalar @{$self->{data}} - 1 if $n < 0;
-                return $self->{data}->[$n][$row_index][$v_index];
+                push @{$neighbor->{right}}, $self->{data}->[$floor_index][$row_index][ ($v_index + 1) % $v_length ];
+                push @{$neighbor->{left}}, $self->{data}->[$floor_index][$row_index][ $v_index - 1 < 0 ? $v_length - 1 : $v_index - 1 ];
+                push @{$neighbor->{back}}, $self->{data}->[$floor_index][ ($row_index + 1) % $row_length ][$v_index];
+                push @{$neighbor->{front}}, $self->{data}->[$floor_index][ $row_index - 1 < 0 ? $row_length - 1 : $row_index - 1 ][$v_index];
+                push @{$neighbor->{top}}, $self->{data}->[ ($floor_index + 1) % $floor_length ][$row_index][$v_index];
+                push @{$neighbor->{bottom}}, $self->{data}->[ $floor_index -1 < 0 ? $floor_length - 1 : $floor_index - 1 ][$row_index][$v_index];
             });
     }
 
