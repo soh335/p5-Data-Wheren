@@ -24,7 +24,7 @@ BEGIN {
 }
 use inc::Module::Install;
 
-all_from 'lib/Data/Wheren.pm';
+all_from 'lib/Data/Wheren/Base.pm';
 
 
 test_requires 'Test::More'     => '0.88';
