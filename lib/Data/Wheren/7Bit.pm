@@ -179,7 +179,7 @@ Like C<deocde()> but C<decode_to_interval()> decodes $hash to $lat_range, $lon_r
 
 =head2 $hash = $wheren->adjacent($hash, $direction)
 
-Returns the adjacent wheren. C<$direction> should be C<right>, C<left>, C<front>, C<back>, C<bottom>, C<top>.
+Returns the adjacent wheren. C<$direction> should be C<right>, C<left>, C<front>, C<back>, C<bottom> or C<top>.
 
 =head1 DEPENDENCIES
 
