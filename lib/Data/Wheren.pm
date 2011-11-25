@@ -118,20 +118,22 @@ sub _gen_border {
     my ($self) = @_;
 
     my $border = { right => {}, left => {}, top => {}, bottom => {}, back => {}, front => {} };
+    my $row_length = @{$self->{data}[0]};
+    my $v_length = @{$self->{data}[0][0]};
 
-    for my $i ( 0 .. 3 ) {
-        $border->{bottom}{$_} = 1 for @{$self->{data}->[0][$i]};
-        $border->{top}{$_} = 1 for @{$self->{data}->[scalar @{$self->{data}} - 1][$i]};
+    for my $i ( 0 .. $row_length - 1 ) {
+        $border->{bottom}{$_} = 1 for @{$self->{data}[0][$i]};
+        $border->{top}{$_} = 1 for @{$self->{data}[scalar @{$self->{data}} - 1][$i]};
     }
 
     for my $floor ( @{$self->{data}} ) {
 
         $border->{front}{$_} = 1 for @{$floor->[0]};
-        $border->{back}{$_} = 1 for @{$floor->[3]};
+        $border->{back}{$_} = 1 for @{$floor->[$row_length - 1]};
 
         for my $row ( @$floor ) {
             $border->{left}{$row->[0]} = 1;
-            $border->{right}{$row->[3]} = 1;
+            $border->{right}{$row->[$v_length - 1]} = 1;
         }
     }
 
