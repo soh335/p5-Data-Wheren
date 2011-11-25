@@ -24,11 +24,6 @@ sub new {
     $self;
 }
 
-sub _gen_int {
-    my $self = shift;
-    [ [ -90, 90 ], [ -180, 180 ], [ $self->{min}, $self->{max} ] ];
-}
-
 #my ($self, $lat, $lon, $timestamp, $level) = @_;
 sub encode {
     croak "should be override encode method";
@@ -61,6 +56,11 @@ sub adjacent {
     }
 
     $base . $self->{enc}->[$self->{neighbor}->{$direction}[$index]];
+}
+
+sub _gen_int {
+    my $self = shift;
+    [ [ -90, 90 ], [ -180, 180 ], [ $self->{min}, $self->{max} ] ];
 }
 
 sub _search_data {
