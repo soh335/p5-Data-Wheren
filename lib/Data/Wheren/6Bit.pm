@@ -112,17 +112,49 @@ This document describes Data::Wheren::6Bit version 0.01.
 
     use Data::Wheren::6Bit;
 
+    my $wheren = Data::Wheren::6Bit->new;
+    my $hash = $wheren->encode( $lat, $lon, $epoch_time, $level );
+    my ($lat, $lon, $epoch_time) = $wheren->decode( $hash );
+
 =head1 DESCRIPTION
 
-# TODO
+Data::Wheren::6Bit encodes and decodes wheren strings as 6Bit mode.
 
-=head1 INTERFACE
+=head1 METHODS
 
-=head2 Functions
+=head2 $wheren = Data::Wheren::6Bit->new(%args);
 
-=head3 C<< hello() >>
+Arguments can be:
 
-# TODO
+=over
+
+=item * C<enc>
+
+=item * C<enc_world_length>
+
+=item * C<data>
+
+=item * C<min>
+
+=item * C<max>
+
+=back
+
+=head2 $hash = $wheren->encode($lat, $lon, $epoch_time, $level)
+
+Encodes the given $lat, $lon and $epoch_time to a wheren. 
+
+=head2 ($lat, $lon, $epoch_time) = $wheren->decode( $hash )
+
+Decodes $hash to $lat, $lon and $epoch_time
+
+=head2 [$lat_range, $lon_range, $epoch_time_range] = $wheren->decode_to_interval( $hash )
+
+Like C<deocde()> but C<decode_to_interval()> decodes $hash to $lat_range, $lon_range and $epoch_time_range. Each range is a reference to two elements arrays which contains the upper and lower bounds.
+
+=head2 $hash = $wheren->adjacent($hash, $direction)
+
+Returns the adjacent wheren. C<$direction> should be C<right>, C<left>, C<front>, C<back>, C<bottom>, C<top>.
 
 =head1 DEPENDENCIES
 
@@ -136,15 +168,16 @@ to cpan-RT.
 
 =head1 SEE ALSO
 
-L<perl>
+L<Data::Wheren::Base>
+L<Data::Wheren::7Bit>
 
 =head1 AUTHOR
 
-<<YOUR NAME HERE>> E<lt><<YOUR EMAIL ADDRESS HERE>>E<gt>
+<<Soh Kitahara>> E<lt><<sugarbabe335+perl@gmail.com>>E<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2011, <<YOUR NAME HERE>>. All rights reserved.
+Copyright (c) 2011, <<Soh Kitahara>>. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
