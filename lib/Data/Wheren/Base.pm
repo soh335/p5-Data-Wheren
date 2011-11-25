@@ -1,4 +1,4 @@
-package Data::Wheren;
+package Data::Wheren::Base;
 use 5.008_001;
 use strict;
 use warnings;
@@ -145,27 +145,15 @@ __END__
 
 =head1 NAME
 
-Data::Wheren - Perl extention to do something
+Data::Wheren::Base - Base class for Wheren
 
 =head1 VERSION
 
-This document describes Data::Wheren version 0.01.
+This document describes Data::Wheren::Base version 0.01.
 
-=head1 SYNOPSIS
-
-    use Data::Wheren;
-
-=head1 DESCRIPTION
-
-# TODO
-
-=head1 INTERFACE
+=head1 METHODS
 
 =head2 Functions
-
-=head3 C<< hello() >>
-
-# TODO
 
 =head1 DEPENDENCIES
 
@@ -179,15 +167,16 @@ to cpan-RT.
 
 =head1 SEE ALSO
 
-L<perl>
+L<Data::Wheren::6Bit>
+L<Data::Wheren::7Bit>
 
 =head1 AUTHOR
 
-<<YOUR NAME HERE>> E<lt><<YOUR EMAIL ADDRESS HERE>>E<gt>
+<<Soh Kitahara>> E<lt><<sugarbabe335+perl@gmail.com>>E<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2011, <<YOUR NAME HERE>>. All rights reserved.
+Copyright (c) 2011, <<Soh Kitahara>>. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
